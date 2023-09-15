@@ -13,7 +13,7 @@ class Movies(Base):
     year = Column(Integer, nullable=False)
     description = Column(String, nullable=True)
     director = Column(String, nullable=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), ondelete="CASCADE", nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     t_create = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )
@@ -25,6 +25,6 @@ class Movies(Base):
     )
     t_delete = Column(TIMESTAMP(timezone=True))
 
-    __table_args__ = (UniqueConstraint("title", name="movie_title"),)
-
     user = relationship("Users")
+    
+    __table_args__ = (UniqueConstraint("title", name="movie_title_key"),)
