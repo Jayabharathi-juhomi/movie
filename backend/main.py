@@ -4,6 +4,7 @@ from starlette.middleware.sessions import SessionMiddleware
 
 from backend.routers.user import auth_router
 from backend.routers.oauth import oauth_router
+from backend.routers.movie import movie_router
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key="!secret")
 app.add_middleware(
@@ -16,3 +17,4 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(oauth_router)
+app.include_router(movie_router)
