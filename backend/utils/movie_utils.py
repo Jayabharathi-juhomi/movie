@@ -16,6 +16,5 @@ def get_current_user_id(token: str, db) -> int:
     email = decoded_token["email"]
     user_detail = user_db_handler.load_by_column(
     db=db, column_name='email', value=email)
-    print('user_detail ', user_detail)
     return user_detail.id
     
