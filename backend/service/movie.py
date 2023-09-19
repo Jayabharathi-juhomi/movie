@@ -15,8 +15,10 @@ def preprocess_movie_data(request_payload, db) -> dict:
         movie_data["id"] = uuid.uuid4()
         token = movie_data['token']
         user_id = get_current_user_id(token, db)
+        print('user_id ', user_id)
         movie_data["user_id"] = user_id
         movie_data.pop("token", None)
+        print('final_movie_data ', movie_data)
         return movie_data
 
 
