@@ -11,6 +11,7 @@ from backend.utils.movie_utils import get_current_user_id
 
 def preprocess_movie_data(request_payload, db) -> dict:
         movie_data = request_payload.model_dump()
+        print('movie_data ', movie_data)
         movie_data["id"] = uuid.uuid4()
         token = movie_data['token']
         user_id = get_current_user_id(token, db)
@@ -26,9 +27,13 @@ class MovieService:
         return movie_db_handler.create(db, input_object=movie_data)
 
     @staticmethod
-    def update_movie(request_payload: MovieSchema, db: Session):
+    def update_movie(request_payload: MovieSchema, user:Movies, db: Session):
+        print('update_movie_service_method')
+        print(user)
+        print()
+        print(request_payload)
         movie_data = preprocess_movie_data(request_payload, db)
-        return movie_db_handler.update(db=db, db_obj=Movies, input_object=movie_data)
+        return movie_db_handler.update(db=db, db_obj=user, input_object=movie_data)
     
 
 movie_service = MovieService()

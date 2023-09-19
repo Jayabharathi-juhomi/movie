@@ -1,5 +1,5 @@
 from typing import Any
-
+from pydantic import UUID4
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -27,8 +27,13 @@ def create_movie(request_payload: MovieSchema, db: Session = Depends(get_db)):
 
 @movie_router.post("/movies/{id}",
                     response_model=MovieSchema)
-def update_movie(request_payload: MovieSchema, db: Session = Depends(get_db)):
-    return movie_service.update_movie(request_payload, db)
+def update_movie(id: UUID4, request_payload: MovieSchema, db: Session = Depends(get_db)):
+    print('id ', id)
+    print()
+    movie = movie_db_handler.load_by_column(db=db, column_name="id", value=id)
+    print('movie ', movie)
+    print()
+    return movie_service.update_movie(request_payload, movie, db)
 
 # @movie_router.post("/delete-movies/",
 #                     response_model=MovieSchema)
