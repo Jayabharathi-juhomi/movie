@@ -8,3 +8,6 @@ export const USER_SUCCESS = "User created successfully";
 export const INFO = "info";
 export const SUCCESS = "success";
 export const ERROR = "error";
+export const MOVIENAME_REQUIRED = "Movie Name is required";
+export const YEAR_REQUIRED = "Year is required";
+export const MOVIE_CREATED_SUCCESSFULLY = "Movie Created Successfully";

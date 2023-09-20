@@ -35,3 +35,14 @@ export interface SignInProps {
   register: any;
   errors: any;
 }
+
+export interface MovieFormData {
+  moviename: string;
+  year: string;
+  director: string;
+  description: string;
+}
+
+export interface MoviesProps {
+  movies: any;
+}
