@@ -42,13 +42,13 @@ def create_movie(
     request_payload: MovieSchema,
     db: Session = Depends(get_db)
 ):
-    # try:
+    try:
         return movie_service.create_movie(request_payload, db)
-    # except Exception as e:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail=str(e)
-    #     )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 
 
 @movie_router.patch(
