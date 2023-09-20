@@ -13,7 +13,7 @@ class Movies(Base):
     year = Column(Integer, nullable=False)
     description = Column(String, nullable=True)
     director = Column(String, nullable=True)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=True)
     t_create = Column(
         TIMESTAMP(timezone=True), nullable=False, server_default=text("now()")
     )

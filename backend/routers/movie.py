@@ -27,30 +27,35 @@ def get_movie_or_raise_404(db: Session, id: UUID4):
     return movie
 
 
-@movie_router.post("/movies",
-                   response_model=MovieResponseSchema,
-                   description="Create a new movie",
-                   status_code=status.HTTP_201_CREATED,
-                   responses={status.HTTP_500_INTERNAL_SERVER_ERROR: {
-                       "description": "Internal Server Error"
-                   }
-                   }
-                   )
-def create_movie(request_payload: MovieSchema,
-                 db: Session = Depends(get_db)
-                 ):
-    try:
+@movie_router.post(
+    "/movies",
+    response_model=MovieResponseSchema,
+    description="Create a new movie",
+    status_code=status.HTTP_201_CREATED,
+    responses={
+        status.HTTP_500_INTERNAL_SERVER_ERROR: {
+            "description": "Internal Server Error"
+        }
+    }
+)
+def create_movie(
+    request_payload: MovieSchema,
+    db: Session = Depends(get_db)
+):
+    # try:
         return movie_service.create_movie(request_payload, db)
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(e)
-        )
+    # except Exception as e:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail=str(e)
+    #     )
 
 
-@movie_router.patch("/movies/{id}",
-                    response_model=MovieResponseSchema,
-                    description="Update a movie by ID")
+@movie_router.patch(
+    "/movies/{id}",
+    response_model=MovieResponseSchema,
+    description="Update a movie by ID"
+)
 def update_movie(
     id: UUID4, request_payload: MovieSchema,
     db: Session = Depends(get_db)
@@ -59,8 +64,10 @@ def update_movie(
     return movie_service.update_movie(request_payload, movie, db)
 
 
-@movie_router.get("/movies/{id}",
-                  description="Get a movie by ID")
+@movie_router.get(
+    "/movies/{id}",
+    description="Get a movie by ID"
+)
 def get_movie_by_id(
     id: UUID4,
     db: Session = Depends(get_db)
@@ -69,8 +76,10 @@ def get_movie_by_id(
     return movie
 
 
-@movie_router.get("/movies",
-                  description="Get a list of all movies")
+@movie_router.get(
+    "/movies",
+    description="Get a list of all movies"
+)
 def get_movies(db: Session = Depends(get_db)):
     movies = movie_db_handler.load_all(db=db)
     if not movies:
@@ -78,8 +87,9 @@ def get_movies(db: Session = Depends(get_db)):
     return movies
 
 
-@movie_router.delete("/movies/{id}",
-                     description="Delete a movie by ID",)
+@movie_router.delete(
+    "/movies/{id}",
+    description="Delete a movie by ID",)
 def delete_movie(id: UUID4, db: Session = Depends(get_db)):
     movie = get_movie_or_raise_404(db, id)
     if not movie:

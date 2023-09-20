@@ -11,9 +11,9 @@ from backend.utils.movie_utils import get_current_user_id
 
 def preprocess_movie_data(request_payload, db) -> dict:
         movie_data = request_payload.model_dump()
-        token = movie_data['token']
-        user_id = get_current_user_id(token, db)
-        movie_data["user_id"] = user_id
+        # token = movie_data['token']
+        # user_id = get_current_user_id(token, db)
+        # movie_data["user_id"] = user_id
         movie_data.pop("token", None)
         return movie_data
 

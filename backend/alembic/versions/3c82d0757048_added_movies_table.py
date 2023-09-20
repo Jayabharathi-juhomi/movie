@@ -29,7 +29,7 @@ def upgrade():
             "user_id",
             sa.dialects.postgresql.UUID(as_uuid=True),
             sa.ForeignKey("users.id", ondelete="CASCADE"),
-            nullable=False,
+            nullable=True,
         ),
         sa.Column(
             "t_create",

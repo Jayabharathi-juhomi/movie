@@ -7,7 +7,7 @@ class MovieSchema(BaseModel):
     year: int
     description: Optional[str] = None
     director: Optional[str] = None
-    token: str
+    token: Optional[str] = None
 
 
 class ListMovieSchema(BaseModel):
