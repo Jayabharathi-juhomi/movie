@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, List
 from pydantic import UUID4
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
@@ -6,11 +6,11 @@ from sqlalchemy.orm import Session
 from backend.db_handler.movie_handler import movie_db_handler
 from backend.models.database import get_db
 from backend.schemas.request.movie import (
-    MovieSchema,
-    ListMovieSchema
+    MovieSchema
 )
 from backend.schemas.response.movie import (
-    MovieResponseSchema
+    MovieResponseSchema,
+    DeletedMovieResponseSchema
 )
 from backend.service.movie import movie_service
 
@@ -66,19 +66,20 @@ def update_movie(
 
 @movie_router.get(
     "/movies/{id}",
-    description="Get a movie by ID"
+    description="Get a movie by ID",
+    response_model=MovieResponseSchema
 )
 def get_movie_by_id(
     id: UUID4,
     db: Session = Depends(get_db)
 ):
-    movie = get_movie_or_raise_404(db, id)
-    return movie
+    return get_movie_or_raise_404(db, id)
 
 
 @movie_router.get(
     "/movies",
-    description="Get a list of all movies"
+    description="Get a list of all movies",
+    response_model=List[MovieResponseSchema]
 )
 def get_movies(db: Session = Depends(get_db)):
     movies = movie_db_handler.load_all(db=db)
@@ -89,13 +90,16 @@ def get_movies(db: Session = Depends(get_db)):
 
 @movie_router.delete(
     "/movies/{id}",
-    description="Delete a movie by ID",)
-def delete_movie(id: UUID4, db: Session = Depends(get_db)):
-    movie = get_movie_or_raise_404(db, id)
-    if not movie:
-        return movie
+    description="Delete a movie by ID",
+    response_model=DeletedMovieResponseSchema
+)
+def delete_movie(
+    id: UUID4,
+    db: Session = Depends(get_db)
+):
+    _ = get_movie_or_raise_404(db, id)
     deleted_movie = movie_db_handler.delete(db=db, id=id)
     return {
-        "message": "Movie deleted successfully",
+        "detail": "Movie deleted successfully",
         "deleted_movie": deleted_movie
     }
