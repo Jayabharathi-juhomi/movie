@@ -46,7 +46,7 @@ const Movie = () => {
       .catch((error) => {
         setLoading(false);
       });
-  })
+  }, []);
 
   const submit = async (data: MovieFormData) => {
     setShowMessage(true);

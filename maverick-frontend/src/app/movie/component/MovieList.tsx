@@ -1,53 +1,37 @@
 import * as React from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Typography from "@mui/material/Typography";
 import { MoviesProps } from '@/app/component/interfaces';
 
-export default function Movielist({
+export default function MovieList({
   movies
-}: MoviesProps
-) {
+}: MoviesProps) {
   return (
-
-    <Box sx={{ width: '100%' }}>
-      <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-        <Grid xs={6}>
-          {movies.map((movie: any) =>
-
-        <Box
-        sx={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        flexDirection: "row",
-        '& > :not(style)': {
-          m: 1,
-          width: 150,
-          height: 150,
-        },
-      }}
-    >
-
-      <Paper elevation={3}>
-        <Box
-        sx={{
-            marginTop: 1,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-        }}
-        >
-        <Typography variant="h6" gutterBottom>{movie.title}</Typography>
-        <Typography>{movie.year}</Typography>
-        <Typography>{movie.director}</Typography>
-        <Typography>{movie.description}</Typography>
-        </Box>
-
-      </Paper>
-    </Box>
-    )}
-        </Grid>
+    <Box sx={{ width: '200%',height: '200%' }}>
+      <Grid container spacing={1} sx={{ alignItems: "center" }}>
+        {movies.map((movie: any) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={movie.id}>
+            <Paper elevation={3} sx={{ padding: 2, width: '100%', height: '100%' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  width: '100%',
+                  height: '100%',
+                  alignItems: "center",
+                }}
+              >
+                <Typography variant="h6" gutterBottom>{movie.title}</Typography>
+                <Typography>{movie.year}</Typography>
+                <Typography>{movie.director}</Typography>
+                <Typography>{movie.description}</Typography>
+              </Box>
+            </Paper>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );
