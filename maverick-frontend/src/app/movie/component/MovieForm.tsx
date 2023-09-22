@@ -108,7 +108,15 @@ export default function MovieFormDialog({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={formHandleSubmit(onSubmit)}>Submit</Button>
+          <Button
+              type="submit"
+              onClick={() => {
+                formHandleSubmit(onSubmit)();
+                handleClose();
+              }}
+            >
+              Submit
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
