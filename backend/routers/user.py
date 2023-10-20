@@ -1,5 +1,5 @@
 from typing import Any
-
+import logging
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
@@ -18,15 +18,19 @@ from backend.service.user import user_service
 from backend.utils.email_utils import send_reset_password_email
 from backend.utils.utils import (
     generate_password_reset_token,
-    verify_password_reset_token
+    decode_token
 )
 
+logger = logging.getLogger(__name__)
 auth_router = APIRouter(prefix="/api/v1/user", tags=["Authentication"])
 
 
 def check_existing_user(db, column_name, value):
-    existing_user = user_db_handler.load_by_column(
-        db=db, column_name=column_name, value=value)
+    try:
+        existing_user = user_db_handler.load_by_column(
+            db=db, column_name=column_name, value=value)
+    except Exception as e:
+        logger.error('Error retriving user: %s', e)
     return existing_user
 
 
@@ -49,13 +53,19 @@ def check_existing_user(db, column_name, value):
     },
 )
 def sign_up(request_payload: UserSchema, db: Session = Depends(get_db)) -> Any:
-    existing_user = check_existing_user(db=db, column_name='email', value=request_payload.email)
+    existing_user = check_existing_user(
+        db=db, column_name='email', value=request_payload.email)
     if existing_user:
+        logger.warning(
+            "User sign-up failed: User with this email already exists")
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="User with this email already exists",
         )
-    return user_service.create_user(request_payload=request_payload, db=db)
+
+    user = user_service.create_user(request_payload=request_payload, db=db)
+    logger.info("User sign-up successful for user: %s", user.email)
+    return user
 
 
 @auth_router.post(
@@ -74,12 +84,15 @@ def sign_up(request_payload: UserSchema, db: Session = Depends(get_db)) -> Any:
     },
 )
 def sign_in(request_payload: UserSchema, db: Session = Depends(get_db)) -> Any:
-    existing_user = check_existing_user(db=db, column_name='email', value=request_payload.email)
+    existing_user = check_existing_user(
+        db=db, column_name='email', value=request_payload.email)
     if not existing_user:
+        logger.warning("User sign-in failed: email id doesn't exists")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect email"
         )
     if existing_user.t_delete:
+        logger.warning("Inactive user")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
         )
@@ -87,6 +100,7 @@ def sign_in(request_payload: UserSchema, db: Session = Depends(get_db)) -> Any:
         request_payload, existing_user
     )
     if not valid_password:
+        logger.warning("Incorrect Password")
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Incorrect password"
         )
@@ -113,8 +127,11 @@ def sign_in(request_payload: UserSchema, db: Session = Depends(get_db)) -> Any:
     },
 )
 async def recover_password(email: str, db: Session = Depends(get_db)) -> Any:
-    user = user_db_handler.load_by_column(db=db, column_name="email", value=email)
+    user = user_db_handler.load_by_column(
+        db=db, column_name="email", value=email)
     if not user:
+        logger.warning(
+            "The user with this email does not exist in the system.")
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="The user with this email does not exist in the system.",
@@ -153,12 +170,15 @@ async def recover_password(email: str, db: Session = Depends(get_db)) -> Any:
 def reset_password(
         token: str, request_payload: ResetPasswordSchema, db: Session = Depends(get_db)
 ) -> Any:
-    email = verify_password_reset_token(token)
+    decoded_token = decode_token(token)
+    email = decoded_token["email"]
     if not email:
+        logger.warning('Invalid token')
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid token"
         )
-    user = user_db_handler.load_by_column(db=db, column_name="email", value=email)
+    user = user_db_handler.load_by_column(
+        db=db, column_name="email", value=email)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

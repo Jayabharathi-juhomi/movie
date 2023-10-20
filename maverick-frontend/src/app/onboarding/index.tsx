@@ -15,64 +15,68 @@ export default function Onboarding() {
     router.push("/signin");
   };
 
-  const navigateToSignUp= () => {
+  const navigateToSignUp = () => {
     router.push("/signup");
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        backgroundColor: "#303030",
-      }}
-    >
+    <Box className="bg-white display-flex">
       <CssBaseline />
-      <AppBar component="nav">
+      <AppBar component="nav" className="bg-primary">
         <Toolbar>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1, display: { xs: "none", sm: "block" } }}
-          >
-            Maverick
-          </Typography>
-          <Box sx={{ display: { xs: "none", sm: "block" } }}>
-            <Button sx={{ color: "#fff" }} onClick={navigateToSignIn}>
-              Login
-            </Button>
-            <Button sx={{ color: "#fff" }} onClick={navigateToSignUp}>
-              Sign Up
-            </Button>
-          </Box>
+          <div className="flex-grow hidden sm:block">
+            <Typography
+              variant="h6"
+              component="div"
+              className="text-white sm-sm md-md lg-lg xl-xl"
+            >
+              Maverick
+            </Typography>
+          </div>
+          <div className="hidden sm:block">
+            <Box>
+              <Button className="text-white mr-2" onClick={navigateToSignIn}>
+                Login
+              </Button>
+              <Button 
+              className="text-black bg-white hover:bg-lightgrey" 
+              onClick={navigateToSignUp}
+              variant="contained"
+              >
+                Sign Up
+              </Button>
+            </Box>
+          </div>
         </Toolbar>
       </AppBar>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box className="p-3" component="main">
         <Toolbar />
         <Typography
-          sx={{ color: "#fff", marginTop: "30px" }}
+          className="text-black font-bold mt-10"
           variant="h2"
           gutterBottom
         >
-          Build products faster
+          Accelerate product development
         </Typography>
-        <Typography
-          sx={{ color: "#fff", marginTop: "-30px" }}
-          variant="h2"
-          gutterBottom
-        >
-          in Next.js and Python
-        </Typography>
-        <Typography
-          variant="h5"
-          gutterBottom
-          sx={{ color: "#fff", marginTop: "20px" }}
-        >
-          Maverick is the best Next.js and Python SaaS template out there. Focus
-          on your business, not on the boilerplate.
+        <div>
+          <Typography
+            sx={{ marginTop: "-20px" }}
+            className="text-black font-bold"
+            variant="h2"
+            gutterBottom
+          >
+            in Next.js and Python
+          </Typography>
+        </div>
+        <Typography variant="h5" gutterBottom className="text-black mt-10">
+          Maverick stands out as the top Next.js and Python SaaS template available.
+          Concentrate on your business, not on the initial setup and repetitive tasks.
         </Typography>
         <br />
         <br />
-        <Button variant="contained">Maverick your next app</Button>
+        <Button className="bg-primary text-white hover:bg-lightblack" variant="contained">
+          Maverick your next app
+        </Button>
         <br />
         <br />
       </Box>

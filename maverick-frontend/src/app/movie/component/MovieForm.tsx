@@ -38,9 +38,10 @@ export default function MovieFormDialog({
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      <Button className="text-black font-bold border-black mb-4" variant="outlined" onClick={handleClickOpen}>
         Add Movie
       </Button>
+      <br></br>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create Movie</DialogTitle>
         <DialogContent>

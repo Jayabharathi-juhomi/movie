@@ -14,6 +14,7 @@ import { createMovie, movieList } from "./api/route";
 import { useRouter } from "next/navigation";
 import { MovieFormData } from "./../component/interfaces";
 import { useEffect } from 'react';
+import NavBar from "../component/NavBar";
 
 const defaultTheme = createTheme();
 
@@ -41,7 +42,7 @@ const Movie = () => {
         if (res.status === 200) {
           setMovies(response);
         }
-         setLoading(false);
+        setLoading(false);
       })
       .catch((error) => {
         setLoading(false);
@@ -57,12 +58,13 @@ const Movie = () => {
         if (res.status === 201) {
           setMessage(Constants.MOVIE_CREATED_SUCCESSFULLY);
           setMessageColor(Constants.SUCCESS);
+          location.reload()
         } else {
           const data = response.detail;
           setMessage(data);
           setMessageColor(Constants.ERROR);
         }
-         setLoading(false);
+        setLoading(false);
       })
       .catch((error) => {
         setMessage(error);
@@ -71,37 +73,42 @@ const Movie = () => {
       });
   };
 
-  return(
-    <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <Box
-          sx={{
-            marginTop: 8,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-      <MovieForm
-        loading={loading}
-        showMessage={showMessage}
-        setShowMessage={setShowMessage}
-        message={message}
-        messageColor={messageColor}
-        onSubmit={submit}
-        formHandleSubmit={handleSubmit}
-        register={register}
-        errors={errors}
-        />
-      <MovieList
-      movies={movies}
-      />
+  return (
+    <Box className="flex">
+      <NavBar></NavBar>
+      <Box component="main" className="mt-10"
+        sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - 240px)` } }}>
+        <ThemeProvider theme={defaultTheme}>
+          <Container component="main" maxWidth="xs">
+            <CssBaseline />
+            <Box
+              sx={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              <MovieForm
+                loading={loading}
+                showMessage={showMessage}
+                setShowMessage={setShowMessage}
+                message={message}
+                messageColor={messageColor}
+                onSubmit={submit}
+                formHandleSubmit={handleSubmit}
+                register={register}
+                errors={errors}
+              />
+              <MovieList
+                movies={movies}
+              />
+            </Box>
+          </Container>
+        </ThemeProvider>
+      </Box>
     </Box>
-  </Container>
-  </ThemeProvider>
   );
 };
 export default Movie;
 
-  

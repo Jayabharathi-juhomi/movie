@@ -1,9 +1,10 @@
 import secrets
 from datetime import datetime, timedelta
 from typing import Final
-
+from backend.db_handler.user_handler import user_db_handler
 from jose import jwt
 from passlib.context import CryptContext
+from fastapi import HTTPException
 
 from backend.config import get_settings
 
@@ -31,7 +32,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
     else:
-        expire = datetime.utcnow() + timedelta(minutes=15)
+        expire = datetime.utcnow() + timedelta(minutes=60)
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
     return encoded_jwt
@@ -45,15 +46,26 @@ def generate_password_reset_token(email: str) -> str:
     return encoded_jwt
 
 
-def verify_password_reset_token(token: str) -> str | None:
-    try:
-        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
-        return decoded_token["email"]
-    except jwt.JWTError:
-        return None
-
 def generate_random_oauth_password(length=20):
     rlength = (length * 3) // 4
     token = secrets.token_urlsafe(rlength)
     translation = str.maketrans('lIO0', 'sxyz')
     return token.translate(translation)
+
+
+def decode_token(token: str):
+    try:
+        decoded_token = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+        return decoded_token
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.JWTError as e:
+        raise HTTPException(
+            status_code=401, detail=f"JWT verification error: {str(e)}")
+
+
+def get_user_detail(decoded_token: str, db):
+    email = decoded_token["email"]
+    user_detail = user_db_handler.load_by_column(
+        db=db, column_name='email', value=email)
+    return user_detail

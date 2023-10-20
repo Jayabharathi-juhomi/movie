@@ -22,6 +22,11 @@ const SignIn = () => {
     resolver: yupResolver(registerSchema),
   });
   const router = useRouter();
+  
+  const setAccessToken = (response:any) => {
+    const accessToken = response.access_token;
+    localStorage.setItem('access_token', accessToken);
+  };
 
   const submit = async (data: FormData) => {
     setShowMessage(true);
@@ -29,13 +34,15 @@ const SignIn = () => {
     await signIn(data)
       .then(async (res) => {
         const response = await res.json();
-        const data = response.detail;
+        const responseData = response.detail;
         if (res.status === 200) {
-          setMessage(data);
+          localStorage.setItem('emailId', data.email);
+          setAccessToken(response);
+          setMessage(responseData);
           setMessageColor(Constants.SUCCESS);
           router.push("/docs/installation");
         } else {
-          setMessage(data);
+          setMessage(responseData);
           setMessageColor(Constants.ERROR);
         }
         setLoading(false);
@@ -55,6 +62,7 @@ const SignIn = () => {
         const response = await res.json();
         const data = response.detail;
         if (res.status === 200) {
+          setAccessToken(response);
           setMessage(data);
           setMessageColor(Constants.SUCCESS);
           router.push("/docs/installation");
